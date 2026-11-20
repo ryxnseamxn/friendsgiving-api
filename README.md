@@ -12,6 +12,7 @@ Every mutation returns the full gathering, and the same shape is broadcast over 
 | `POST` | `/api/gatherings/{id}/items` | `{ name, category?, emoji?, claimedBy? }` |
 | `POST` | `/api/gatherings/{id}/items/{itemId}/claim` | `{ guestName, note? }`. Returns 409 if the dish is already claimed |
 | `DELETE` | `/api/gatherings/{id}/items/{itemId}/claim` | |
+| `PUT` | `/api/gatherings/{id}/allergies` | `{ guestName, details? }`. Omit `details` for "no allergies"; one answer per guest |
 | `GET` | `/health` | |
 
 ## Admin endpoints

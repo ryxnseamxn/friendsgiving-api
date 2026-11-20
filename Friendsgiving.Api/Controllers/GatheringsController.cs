@@ -6,7 +6,7 @@ using Friendsgiving.Api.Services;
 
 namespace Friendsgiving.Api.Controllers;
 
-/// <summary>Guest-facing endpoints: anyone with the gathering link can view, claim and add dishes.</summary>
+/// <summary>Guest-facing endpoints: anyone with the gathering link can view, claim and add dishes, and share allergies.</summary>
 [ApiController]
 [Route("api/gatherings/{gatheringId:guid}")]
 public class GatheringsController(GatheringService gatherings) : ControllerBase
@@ -65,6 +65,19 @@ public class GatheringsController(GatheringService gatherings) : ControllerBase
         if (gathering is null || dish is null) return NotFound("Dish not found.");
 
         gatherings.RemoveClaim(dish);
+        return await gatherings.SaveAsync(gathering);
+    }
+
+    [HttpPut("allergies")]
+    public async Task<ActionResult<GatheringDto>> SetAllergies(Guid gatheringId, AllergyRequest request)
+    {
+        var guestName = Input.Clean(request.GuestName);
+        if (guestName is null) return BadRequest("Enter your name before sharing allergies.");
+
+        var gathering = await gatherings.FindAsync(gatheringId);
+        if (gathering is null) return NotFound("Gathering not found.");
+
+        gathering.SetAllergies(guestName, Input.Clean(request.Details));
         return await gatherings.SaveAsync(gathering);
     }
 }

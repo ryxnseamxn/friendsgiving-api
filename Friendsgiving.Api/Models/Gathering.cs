@@ -8,6 +8,7 @@ public class Gathering
     public string HostName { get; set; } = string.Empty;
     public string? Location { get; set; }
     public ICollection<DishItem> DishItems { get; set; } = new List<DishItem>();
+    public ICollection<Allergy> Allergies { get; set; } = new List<Allergy>();
 
     public DishItem AddDish(string name, string? category, string? emoji, bool isCustom)
     {
@@ -22,5 +23,12 @@ public class Gathering
         };
         DishItems.Add(dish);
         return dish;
+    }
+
+    public void SetAllergies(string guestName, string? details)
+    {
+        var existing = Allergies.FirstOrDefault(a => string.Equals(a.GuestName, guestName, StringComparison.OrdinalIgnoreCase));
+        if (existing is null) Allergies.Add(new Allergy { GuestName = guestName, Details = details });
+        else existing.Details = details;
     }
 }

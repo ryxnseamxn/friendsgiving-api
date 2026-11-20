@@ -13,6 +13,7 @@ public class GatheringService(AppDbContext db, IHubContext<FriendsgivingHub, IFr
     public Task<Gathering?> FindAsync(Guid id) =>
         db.Gatherings
             .Include(g => g.DishItems).ThenInclude(d => d.Claim)
+            .Include(g => g.Allergies)
             .FirstOrDefaultAsync(g => g.Id == id);
 
     public async Task<GatheringDto> SaveAsync(Gathering gathering)

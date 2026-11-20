@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<Gathering> Gatherings { get; set; } = null!;
     public DbSet<DishItem> DishItems { get; set; } = null!;
     public DbSet<Claim> Claims { get; set; } = null!;
+    public DbSet<Allergy> Allergies { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,6 +31,17 @@ public class AppDbContext : DbContext
         // Unique claim per dish item
         modelBuilder.Entity<Claim>()
             .HasIndex(c => c.DishItemId)
+            .IsUnique();
+
+        // One allergy answer per guest per gathering
+        modelBuilder.Entity<Allergy>()
+            .HasOne(a => a.Gathering)
+            .WithMany(g => g.Allergies)
+            .HasForeignKey(a => a.GatheringId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Allergy>()
+            .HasIndex(a => new { a.GatheringId, a.GuestName })
             .IsUnique();
     }
 }

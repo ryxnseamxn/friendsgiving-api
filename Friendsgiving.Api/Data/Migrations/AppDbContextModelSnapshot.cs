@@ -22,6 +22,30 @@ namespace Friendsgiving.Api.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Friendsgiving.Api.Models.Allergy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("GatheringId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("GuestName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GatheringId", "GuestName")
+                        .IsUnique();
+
+                    b.ToTable("Allergies");
+                });
+
             modelBuilder.Entity("Friendsgiving.Api.Models.Claim", b =>
                 {
                     b.Property<Guid>("Id")
@@ -108,6 +132,17 @@ namespace Friendsgiving.Api.Data.Migrations
                     b.ToTable("Gatherings");
                 });
 
+            modelBuilder.Entity("Friendsgiving.Api.Models.Allergy", b =>
+                {
+                    b.HasOne("Friendsgiving.Api.Models.Gathering", "Gathering")
+                        .WithMany("Allergies")
+                        .HasForeignKey("GatheringId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gathering");
+                });
+
             modelBuilder.Entity("Friendsgiving.Api.Models.Claim", b =>
                 {
                     b.HasOne("Friendsgiving.Api.Models.DishItem", "DishItem")
@@ -137,6 +172,8 @@ namespace Friendsgiving.Api.Data.Migrations
 
             modelBuilder.Entity("Friendsgiving.Api.Models.Gathering", b =>
                 {
+                    b.Navigation("Allergies");
+
                     b.Navigation("DishItems");
                 });
 #pragma warning restore 612, 618

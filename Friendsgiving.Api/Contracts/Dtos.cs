@@ -11,7 +11,8 @@ public record GatheringDto(
     DateTime Date,
     string HostName,
     string? Location,
-    IReadOnlyList<ItemDto> Items);
+    IReadOnlyList<ItemDto> Items,
+    IReadOnlyList<AllergyDto> Allergies);
 
 public record ItemDto(
     Guid Id,
@@ -23,6 +24,8 @@ public record ItemDto(
     ClaimDto? Claim);
 
 public record ClaimDto(string GuestName, string? Note, DateTime ClaimedAt);
+
+public record AllergyDto(string GuestName, string? Details);
 
 public record GatheringSummaryDto(
     Guid Id,
@@ -41,6 +44,8 @@ public record AddItemRequest(string Name, string? Category, string? Emoji, strin
 
 public record ClaimRequest(string GuestName, string? Note);
 
+public record AllergyRequest(string GuestName, string? Details);
+
 public static class Mapping
 {
     public static GatheringDto ToDto(this Gathering gathering) => new(
@@ -53,6 +58,10 @@ public static class Mapping
             .OrderBy(d => d.SortOrder)
             .ThenBy(d => d.Name)
             .Select(d => d.ToDto())
+            .ToList(),
+        gathering.Allergies
+            .OrderBy(a => a.GuestName)
+            .Select(a => new AllergyDto(a.GuestName, a.Details))
             .ToList());
 
     public static ItemDto ToDto(this DishItem dish) => new(
