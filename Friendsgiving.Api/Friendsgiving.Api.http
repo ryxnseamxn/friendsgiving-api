@@ -1,0 +1,6 @@
+@Friendsgiving.Api_HostAddress = http://localhost:5133
+
+GET {{Friendsgiving.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
