@@ -1,42 +1,41 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Friendsgiving.Api.Data;
 using Friendsgiving.Api.Hubs;
+using Friendsgiving.Api.Infrastructure;
+using Friendsgiving.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddOpenApi();
-
-// Add Entity Framework Core with PostgreSQL
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Add SignalR services
-builder.Services.AddSignalR();
-
-// Add controllers
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(ConnectionStrings.Resolve(builder.Configuration)));
+builder.Services.AddScoped<GatheringService>();
+
+// The web build and Expo dev server run on other origins. The SignalR browser client
+// sends credentials by default, which rules out AllowAnyOrigin, so echo the origin back.
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
+    .SetIsOriginAllowed(_ => true)
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-
-// Configure SignalR
-app.MapHub<FriendsgivingHub>("/hubs/friendsgiving");
-
-// Health check endpoint for Railway
-app.MapGet("/health", () => "OK");
-
-// Register controllers
+app.UseCors();
 app.MapControllers();
+app.MapHub<FriendsgivingHub>("/hubs/friendsgiving");
+app.MapGet("/health", () => "OK");
 
 app.Run();

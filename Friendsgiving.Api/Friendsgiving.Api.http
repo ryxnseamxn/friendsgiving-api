@@ -1,6 +1,34 @@
-@Friendsgiving.Api_HostAddress = http://localhost:5133
+@host = http://localhost:5080
+@gatheringId = 00000000-0000-0000-0000-000000000000
+@itemId = 00000000-0000-0000-0000-000000000000
+@adminKey =
 
-GET {{Friendsgiving.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Create a gathering (admin)
+POST {{host}}/api/admin/gatherings
+Content-Type: application/json
+X-Admin-Key: {{adminKey}}
 
-###
+{ "name": "Friendsgiving 2026", "hostName": "Ryan", "date": "2026-11-26T23:00:00Z", "location": null }
+
+### List gatherings (admin)
+GET {{host}}/api/admin/gatherings
+X-Admin-Key: {{adminKey}}
+
+### Add a pre-set dish (admin)
+POST {{host}}/api/admin/gatherings/{{gatheringId}}/items
+Content-Type: application/json
+X-Admin-Key: {{adminKey}}
+
+{ "name": "Turkey", "category": "main", "emoji": "🦃" }
+
+### Get a gathering
+GET {{host}}/api/gatherings/{{gatheringId}}
+
+### Claim a dish
+POST {{host}}/api/gatherings/{{gatheringId}}/items/{{itemId}}/claim
+Content-Type: application/json
+
+{ "guestName": "Sam" }
+
+### Unclaim a dish
+DELETE {{host}}/api/gatherings/{{gatheringId}}/items/{{itemId}}/claim

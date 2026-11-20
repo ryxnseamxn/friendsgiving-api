@@ -1,23 +1,11 @@
-using Friendsgiving.Api.Models;
+using Friendsgiving.Api.Contracts;
 
 namespace Friendsgiving.Api.Hubs;
 
 public interface IFriendsgivingClient
 {
-    Task JoinSuccess(string gatheringId);
-    Task LeaveSuccess(string gatheringId);
-    Task OnDishClaimed(GatheredDishDto dish);
-    Task OnDishUnclaimed(string dishItemId);
-    Task OnTableUpdated();
-}
+    /// <summary>Sent to the gathering's group with its full state after any change.</summary>
+    Task GatheringUpdated(GatheringDto gathering);
 
-public record GatheredDishDto
-{
-    public Guid Id { get; set; }
-    public Guid GatheringId { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Emoji { get; set; } = string.Empty;
-    public bool IsClaimed { get; set; }
-    public string? ClaimedBy { get; set; }
-    public DateTime? ClaimedAt { get; set; }
+    Task GatheringDeleted(Guid gatheringId);
 }
