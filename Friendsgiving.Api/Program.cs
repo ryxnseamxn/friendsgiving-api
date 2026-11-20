@@ -37,5 +37,7 @@ app.UseCors();
 app.MapControllers();
 app.MapHub<FriendsgivingHub>("/hubs/friendsgiving");
 app.MapGet("/health", () => "OK");
+// Railway sets this for GitHub deploys; deploy.zsh polls it to know when a push is live.
+app.MapGet("/version", () => app.Configuration["RAILWAY_GIT_COMMIT_SHA"] ?? "unknown");
 
 app.Run();

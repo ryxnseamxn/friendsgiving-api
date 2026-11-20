@@ -14,6 +14,7 @@ Every mutation returns the full gathering, and the same shape is broadcast over 
 | `DELETE` | `/api/gatherings/{id}/items/{itemId}/claim` | |
 | `PUT` | `/api/gatherings/{id}/allergies` | `{ guestName, details? }`. Omit `details` for "no allergies"; one answer per guest |
 | `GET` | `/health` | |
+| `GET` | `/version` | Git commit this build was deployed from (`unknown` outside Railway) |
 
 ## Admin endpoints
 
