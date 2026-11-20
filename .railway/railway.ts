@@ -1,7 +1,7 @@
 import { defineRailway, github, postgres, preserve, project, service } from 'railway/iac';
 
 // The GitHub repo Railway deploys the API from. Pushes to its default branch redeploy.
-const API_REPO = 'YOUR_GITHUB_USER/friendsgiving-api';
+const API_REPO = 'ryxnseamxn/friendsgiving-api';
 
 export default defineRailway(() => {
   // Managed Postgres; Railway attaches and backs its volume, so none is declared here.
